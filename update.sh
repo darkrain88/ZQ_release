@@ -512,7 +512,7 @@ update_package() {
     local mk_path="$dir/Makefile"
     if [ -d "${mk_path%/*}" ] && [ -f "$mk_path" ]; then
         # 提取repo
-        local PKG_REPO=$(grep -oE "^PKG_SOURCE_URL.*tar\.gz" $mk_path | awk -F"/" '{print $(NF - 2) "/" $(NF -1 )}')
+        local PKG_REPO=$(grep -oE "^PKG_SOURCE_URL.*github.com(/[-a-zA-Z0-9]{1,20}){2}" $mk_path | awk -F"/" '{print $(NF - 1) "/" $NF}')
         if [ -z $PKG_REPO ]; then
             return 1
         fi

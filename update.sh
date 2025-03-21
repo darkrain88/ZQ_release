@@ -697,6 +697,8 @@ main() {
     fix_quickstart
     update_oaf_deconfig
     install_feeds
+	update_package "packages/net/softethervpn5"
+	update_package "packages/net/zerotier"
     support_fw4_adg
     update_script_priority
 }

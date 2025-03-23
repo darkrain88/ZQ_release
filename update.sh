@@ -657,6 +657,13 @@ support_fw4_adg() {
     fi
 }
 
+add_gecoosac() {
+    local gecoosac_dir="$BUILD_DIR/package/openwrt-gecoosac"
+    # 删除旧的目录（如果存在）
+    rm -rf "$gecoosac_dir" 2>/dev/null
+    git clone https://github.com/lwb1978/openwrt-gecoosac.git "$gecoosac_dir"
+}
+
 main() {
     clone_repo
     clean_up

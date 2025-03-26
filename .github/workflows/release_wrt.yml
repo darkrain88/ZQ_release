@@ -23,6 +23,7 @@ on:
           - zn_m2_immwrt
           - zn_m2_libwrt
           - x64_immwrt
+          - zn_m2_libwrt-nowifi
       runs-on:
         required: true
         description: Runs on...

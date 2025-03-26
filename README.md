@@ -42,6 +42,7 @@ cd wrt_release
 编译兆能M2:  
 ./build.sh zn_m2_immwrt  
 ./build.sh zn_m2_libwrt  
+./build.sh zn_m2_libwrt-nowifi  
   
 三方插件源自：https://github.com/kenzok8/small-package.git  
   

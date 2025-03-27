@@ -43,6 +43,7 @@ cd wrt_release
 ./build.sh zn_m2_immwrt  
 ./build.sh zn_m2_libwrt  
 ./build.sh zn_m2_libwrt-nowifi  
+./build.sh zn_m2_immwrt-nowifi
   
 三方插件源自：https://github.com/kenzok8/small-package.git  
   

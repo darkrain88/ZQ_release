@@ -406,11 +406,8 @@ update_pw() {
     # 删除 helper_smartdns_add.lua 文件中的特定行
     [ -f "$smartdns_lua_path" ] && sed -i '/force-qtype-SOA 65/d' "$smartdns_lua_path"
 
-    # 从 chnlist 文件中删除特定的域名
-    sed -i '/\.bing\./d' "$rules_dir/chnlist"
-    sed -i '/microsoft/d' "$rules_dir/chnlist"
-    sed -i '/msedge/d' "$rules_dir/chnlist"
-    sed -i '/github/d' "$rules_dir/chnlist"
+    # 清空chnlist
+    [ -f "$rules_dir/chnlist" ] && echo "" >"$rules_dir/chnlist"
 }
 
 install_opkg_distfeeds() {

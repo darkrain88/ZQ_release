@@ -89,7 +89,7 @@ remove_unwanted_packages() {
         "luci-app-passwall" "luci-app-smartdns" "luci-app-ddns-go" "luci-app-rclone"
         "luci-app-ssr-plus" "luci-app-vssr" "luci-theme-argon" "luci-app-daed" "luci-app-dae"
         "luci-app-alist" "luci-app-argon-config" "luci-app-homeproxy" "luci-app-haproxy-tcp"
-        "luci-app-openclash" "luci-app-mihomo" "luci-app-appfilter"
+        "luci-app-openclash" "luci-app-mihomo" "luci-app-appfilter" "luci-app-msd_lite"
     )
     local packages_net=(
         "haproxy" "xray-core" "xray-plugin" "dns2socks" "alist" "hysteria"
@@ -97,6 +97,7 @@ remove_unwanted_packages() {
         "sing-box" "v2ray-core" "v2ray-geodata" "v2ray-plugin" "tuic-client"
         "chinadns-ng" "ipt2socks" "tcping" "trojan-plus" "simple-obfs"
         "shadowsocksr-libev" "dae" "daed" "mihomo" "geoview" "tailscale" "open-app-filter"
+        "msd_lite"
     )
     local small8_packages=(
         "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq"
@@ -154,7 +155,7 @@ install_small8() {
         luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
         luci-theme-argon netdata luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy \
         luci-app-amlogic nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
-        easytier luci-app-easytier
+        easytier luci-app-easytier msd_lite luci-app-msd_lite
 }
 
 install_feeds() {
@@ -716,6 +717,33 @@ update_dns_app_menu_location() {
     fi
 }
 
+remove_easytier_web() {
+    local easytier_path="$BUILD_DIR/package/feeds/small8/easytier/Makefile"
+    if [ -d "${easytier_path%/*}" ] && [ -f "$easytier_path" ]; then
+        sed -i '/easytier-web/d' "$easytier_path"
+    fi
+}
+
+update_geoip() {
+    local geodata_path="$BUILD_DIR/package/feeds/small8/v2ray-geodata/Makefile"
+    if [ -d "${geodata_path%/*}" ] && [ -f "$geodata_path" ]; then
+        local GEOIP_VER=$(awk -F"=" '/GEOIP_VER:=/ {print $NF}' $geodata_path | grep -oE "[0-9]{1,}")
+        if [ -n "$GEOIP_VER" ]; then
+            local base_url="https://github.com/v2fly/geoip/releases/download/${GEOIP_VER}"
+            # 下载旧的geoip.dat和新的geoip-only-cn-private.dat文件的校验和
+            local old_SHA256=$(wget -qO- "$base_url/geoip.dat.sha256sum" | awk '{print $1}')
+            local new_SHA256=$(wget -qO- "$base_url/geoip-only-cn-private.dat.sha256sum" | awk '{print $1}')
+            # 更新Makefile中的文件名和校验和
+            if [ -n "$old_SHA256" ] && [ -n "$new_SHA256" ]; then
+                if grep -q "$old_SHA256" "$geodata_path"; then
+                    sed -i "s|=geoip.dat|=geoip-only-cn-private.dat|g" "$geodata_path"
+                    sed -i "s/$old_SHA256/$new_SHA256/g" "$geodata_path"
+                fi
+            fi
+        fi
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -760,6 +788,8 @@ main() {
     update_package "zerotier"
     support_fw4_adg
     update_script_priority
+    remove_easytier_web
+    update_geoip
     # update_proxy_app_menu_location
     # update_dns_app_menu_location
 }

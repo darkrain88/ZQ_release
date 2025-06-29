@@ -865,7 +865,7 @@ main() {
     update_smartdns_luci
     update_diskman
     install_feeds
-	update_package "softethervpn5"
+    update_package "softethervpn5"
     update_package "zerotier"
     support_fw4_adg
     update_script_priority

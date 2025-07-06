@@ -25,6 +25,7 @@ on:
         options:
           - ubuntu-20.04
           - ubuntu-22.04
+          - ubuntu-latest
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

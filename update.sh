@@ -253,36 +253,29 @@ update_default_lan_addr() {
 }
 
 remove_something_nss_kmod() {
-    local ipq_target_path="$BUILD_DIR/target/linux/qualcommax/ipq60xx/target.mk"
     local ipq_mk_path="$BUILD_DIR/target/linux/qualcommax/Makefile"
-    if [ -f $ipq_target_path ]; then
-        sed -i 's/kmod-qca-nss-drv-eogremgr//g' $ipq_target_path
-        sed -i 's/kmod-qca-nss-drv-gre//g' $ipq_target_path
-        sed -i 's/kmod-qca-nss-drv-map-t//g' $ipq_target_path
-        sed -i 's/kmod-qca-nss-drv-match//g' $ipq_target_path
-        sed -i 's/kmod-qca-nss-drv-mirror//g' $ipq_target_path
-        sed -i 's/kmod-qca-nss-drv-pvxlanmgr//g' $ipq_target_path
-        sed -i 's/kmod-qca-nss-drv-tun6rd//g' $ipq_target_path
-        sed -i 's/kmod-qca-nss-drv-tunipip6//g' $ipq_target_path
-        sed -i 's/kmod-qca-nss-drv-vxlanmgr//g' $ipq_target_path
-        sed -i 's/kmod-qca-nss-macsec//g' $ipq_target_path
-    fi
+    local target_mks=("$BUILD_DIR/target/linux/qualcommax/ipq60xx/target.mk" "$BUILD_DIR/target/linux/qualcommax/ipq807x/target.mk")
 
-    if [ -f $ipq_mk_path ]; then
-        sed -i 's/kmod-qca-nss-crypto //g' $ipq_mk_path
-        sed -i '/kmod-qca-nss-drv-eogremgr/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-drv-gre/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-drv-map-t/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-drv-match/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-drv-mirror/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-drv-tun6rd/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-drv-tunipip6/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-drv-vxlanmgr/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-drv-wifi-meshmgr/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-macsec/d' $ipq_mk_path
+    for target_mk in "${target_mks[@]}"; do
+        if [ -f "$target_mk" ]; then
+            sed -i 's/kmod-qca-nss-crypto//g' "$target_mk"
+        fi
+    done
 
-        sed -i 's/automount //g' $ipq_mk_path
-        sed -i 's/cpufreq //g' $ipq_mk_path
+    if [ -f "$ipq_mk_path" ]; then
+        sed -i '/kmod-qca-nss-drv-eogremgr/d' "$ipq_mk_path"
+        sed -i '/kmod-qca-nss-drv-gre/d' "$ipq_mk_path"
+        sed -i '/kmod-qca-nss-drv-map-t/d' "$ipq_mk_path"
+        sed -i '/kmod-qca-nss-drv-match/d' "$ipq_mk_path"
+        sed -i '/kmod-qca-nss-drv-mirror/d' "$ipq_mk_path"
+        sed -i '/kmod-qca-nss-drv-tun6rd/d' "$ipq_mk_path"
+        sed -i '/kmod-qca-nss-drv-tunipip6/d' "$ipq_mk_path"
+        sed -i '/kmod-qca-nss-drv-vxlanmgr/d' "$ipq_mk_path"
+        sed -i '/kmod-qca-nss-drv-wifi-meshmgr/d' "$ipq_mk_path"
+        sed -i '/kmod-qca-nss-macsec/d' "$ipq_mk_path"
+
+        sed -i 's/automount //g' "$ipq_mk_path"
+        sed -i 's/cpufreq //g' "$ipq_mk_path"
     fi
 }
 

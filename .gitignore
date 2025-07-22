@@ -8,6 +8,7 @@ imm-nss/
 imm-x64/
 lede/
 libwrt-k612/
+immortalwrt/
 compilecfg/test.ini
 deconfig/test.config
 *.swp

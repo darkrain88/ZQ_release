@@ -22,7 +22,7 @@ COMMIT_HASH=$4
 
 FEEDS_CONF="feeds.conf.default"
 GOLANG_REPO="https://github.com/sbwml/packages_lang_golang"
-GOLANG_BRANCH="24.x"
+GOLANG_BRANCH="25.x"
 THEME_SET="argon"
 LAN_ADDR="192.168.1.1"
 

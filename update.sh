@@ -900,12 +900,12 @@ main() {
     set_nginx_default_config
     update_uwsgi_limit_as
     update_argon
-	update_package "softethervpn5"
-    update_package "zerotier"
     install_feeds
     support_fw4_adg
     update_script_priority
     fix_easytier
+    update_package "softethervpn5"
+    update_package "zerotier"
     update_geoip
     update_package "runc" "releases" "v1.2.6"
     update_package "containerd" "releases" "v1.7.27"

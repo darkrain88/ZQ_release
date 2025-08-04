@@ -87,9 +87,9 @@ update_feeds() {
 remove_unwanted_packages() {
     local luci_packages=(
         "luci-app-passwall" "luci-app-ddns-go" "luci-app-rclone" "luci-app-ssr-plus"
-        "luci-app-vssr" "luci-theme-argon" "luci-app-daed" "luci-app-dae" "luci-app-alist" 
-        "luci-app-argon-config" "luci-app-homeproxy" "luci-app-haproxy-tcp" "luci-app-openclash" 
-        "luci-app-mihomo" "luci-app-appfilter" "luci-app-msd_lite"
+        "luci-app-vssr" "luci-app-daed" "luci-app-dae" "luci-app-alist" "luci-app-homeproxy"
+        "luci-app-haproxy-tcp" "luci-app-openclash" "luci-app-mihomo" "luci-app-appfilter"
+        "luci-app-msd_lite"
     )
     local packages_net=(
         "haproxy" "xray-core" "xray-plugin" "dns2socks" "alist" "hysteria"
@@ -161,10 +161,10 @@ install_small8() {
         tuic-client chinadns-ng ipt2socks tcping trojan-plus simple-obfs shadowsocksr-libev \
         luci-app-passwall v2dat mosdns luci-app-mosdns adguardhome luci-app-adguardhome ddns-go \
         luci-app-ddns-go taskd luci-lib-xterm luci-lib-taskd luci-app-store quickstart \
-        luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest luci-theme-argon netdata \
-        luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy luci-app-amlogic \
-        nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
-        easytier luci-app-easytier msd_lite luci-app-msd_lite cups luci-app-cupsd
+        luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest netdata luci-app-netdata \
+        lucky luci-app-lucky luci-app-openclash luci-app-homeproxy luci-app-amlogic nikki luci-app-nikki \
+        tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf easytier luci-app-easytier \
+        msd_lite luci-app-msd_lite cups luci-app-cupsd
 }
 
 install_fullconenat() {
@@ -195,10 +195,6 @@ fix_default_set() {
     # 修改默认主题
     if [ -d "$BUILD_DIR/feeds/luci/collections/" ]; then
         find "$BUILD_DIR/feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" {} \;
-    fi
-
-    if [ -d "$BUILD_DIR/feeds/small8/luci-theme-argon" ]; then
-        find "$BUILD_DIR/feeds/small8/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
     fi
 
     install -Dm755 "$BASE_PATH/patches/990_set_argon_primary" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/990_set_argon_primary"
@@ -842,34 +838,21 @@ remove_tweaked_packages() {
     fi
 }
 
-# 修复 gettext 编译问题
-# @description: 当 gettext-full 版本为 0.24.1 时，从 OpenWrt 官方仓库更新 gettext-full 和 bison 的 Makefile 以解决编译问题。
-# @see: https://raw.githubusercontent.com/openwrt/openwrt/refs/heads/main/package/libs/gettext-full/Makefile
-# @see: https://raw.githubusercontent.com/openwrt/openwrt/refs/heads/main/tools/bison/Makefile
-fix_gettext_compile() {
-    local gettext_makefile_path="$BUILD_DIR/package/libs/gettext-full/Makefile"
-    local bison_makefile_path="$BUILD_DIR/tools/bison/Makefile"
+update_argon() {
+    local repo_url="https://github.com/jjm2473/luci-theme-argon.git"
+    local dst_theme_path="$BUILD_DIR/feeds/luci/themes/luci-theme-argon"
+    local tmp_dir=$(mktemp -d)
 
-    # 检查 gettext-full 的 Makefile 是否存在并且版本是否为 0.24.1
-    if [ -f "$gettext_makefile_path" ] && grep -q "PKG_VERSION:=0.24.1" "$gettext_makefile_path"; then
-        echo "检测到 gettext 版本为 0.24.1，正在更新 Makefiles..."
-        # 从 OpenWrt 官方仓库下载最新的 Makefile
-        curl -L -o "$gettext_makefile_path" "https://raw.githubusercontent.com/openwrt/openwrt/refs/heads/main/package/libs/gettext-full/Makefile"
-        curl -L -o "$bison_makefile_path" "https://raw.githubusercontent.com/openwrt/openwrt/refs/heads/main/tools/bison/Makefile"
+    echo "正在更新 argon 主题..."
 
+    git clone --depth 1 "$repo_url" "$tmp_dir"
 
-        # https://raw.githubusercontent.com/openwrt/packages/a4ad26b53f772c20b796715aef7ff458b5350781/libs/rpcsvc-proto/patches/0001-po-update-for-gettext-0.22.patch
-        # 使用以上补丁修复rpcsvc-proto编译错误
-        local rpcsvc_proto_dir="$BUILD_DIR/feeds/packages/libs/rpcsvc-proto"
-        if [ -d "$rpcsvc_proto_dir" ]; then
-            local patches_dir="$rpcsvc_proto_dir/patches"
-            local patch_name="0001-po-update-for-gettext-0.22.patch"
-            local patch_url="https://raw.githubusercontent.com/openwrt/packages/a4ad26b53f772c20b796715aef7ff458b5350781/libs/rpcsvc-proto/patches/$patch_name"
-            echo "正在为 rpcsvc-proto 添加 gettext 修复补丁..."
-            mkdir -p "$patches_dir"
-            curl -L -o "$patches_dir/$patch_name" "$patch_url"
-        fi
-    fi
+    rm -rf "$dst_theme_path"
+    rm -rf "$tmp_dir/.git"
+    mv "$tmp_dir" "$dst_theme_path"
+
+    echo "luci-theme-argon 更新完成"
+    echo "Argon 更新完毕。"
 }
 
 main() {
@@ -916,10 +899,10 @@ main() {
     update_diskman
     set_nginx_default_config
     update_uwsgi_limit_as
-    fix_gettext_compile
-    install_feeds
-    update_package "softethervpn5"
+    update_argon
+	update_package "softethervpn5"
     update_package "zerotier"
+    install_feeds
     support_fw4_adg
     update_script_priority
     fix_easytier
@@ -931,3 +914,5 @@ main() {
 }
 
 main "$@"
+
+

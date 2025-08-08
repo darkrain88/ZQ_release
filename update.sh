@@ -416,13 +416,18 @@ EOF
     chmod +x "$sh_dir/custom_task"
 }
 
-# 清理 Passwall 的 chnlist 规则文件
-clear_passwall_chnlist() {
+# 应用 Passwall 相关调整
+apply_passwall_tweaks() {
+    # 清理 Passwall 的 chnlist 规则文件
     local chnlist_path="$BUILD_DIR/feeds/small8/luci-app-passwall/root/usr/share/passwall/rules/chnlist"
-
-    # 如果 chnlist 文件存在，则清空其内容
     if [ -f "$chnlist_path" ]; then
         > "$chnlist_path"
+    fi
+
+    # 调整 Xray 最大 RTT
+    local xray_util_path="$BUILD_DIR/feeds/small8/luci-app-passwall/luasrc/passwall/util_xray.lua"
+    if [ -f "$xray_util_path" ]; then
+        sed -i 's/maxRTT = "1s"/maxRTT = "2s"/g' "$xray_util_path"
     fi
 }
 
@@ -900,7 +905,7 @@ main() {
     update_tcping
     add_ax6600_led
     set_custom_task
-    clear_passwall_chnlist
+    apply_passwall_tweaks
     install_opkg_distfeeds
     update_nss_pbuf_performance
     set_build_signature
@@ -923,12 +928,12 @@ main() {
     update_uwsgi_limit_as
     update_argon
     install_feeds
+    update_package "softethervpn5"
+    update_package "zerotier"
     apply_hash_fixes # 调用哈希修正函数
     support_fw4_adg
     update_script_priority
     fix_easytier
-    update_package "softethervpn5"
-    update_package "zerotier"
     update_geoip
     update_package "runc" "releases" "v1.2.6"
     update_package "containerd" "releases" "v1.7.27"
@@ -937,5 +942,3 @@ main() {
 }
 
 main "$@"
-
-

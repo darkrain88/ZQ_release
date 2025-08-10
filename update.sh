@@ -931,7 +931,7 @@ main() {
     apply_hash_fixes # 调用哈希修正函数
     support_fw4_adg
     update_script_priority
-update_package "softethervpn5"
+    update_package "softethervpn5"
     update_package "zerotier"
     fix_easytier
     update_geoip

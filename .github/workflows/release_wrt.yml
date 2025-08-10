@@ -10,8 +10,8 @@ on:
         type: choice
         default: jdcloud_ipq60xx_immwrt
         options:
-          - aliyun_ap8220_immwrt
-          - cmcc_rax3000m_immwrt
+          - zn_m2_libwrt-nowifi
+          - zn_m2_immwrt-nowifi
           - jdcloud_ax6000_immwrt
           - jdcloud_ipq60xx_immwrt
           - jdcloud_ipq60xx_libwrt

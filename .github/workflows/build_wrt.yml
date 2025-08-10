@@ -22,15 +22,6 @@ on:
           - zn_m2_immwrt
           - zn_m2_libwrt
           - x64_immwrt
-      runs-on:
-        required: true
-        description: Runs on...
-        type: choice
-        default: ubuntu-24.04
-        options:
-          - ubuntu-20.04
-          - ubuntu-22.04
-          - ubuntu-24.04
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -937,6 +937,8 @@ main() {
     update_package "containerd" "releases" "v1.7.27"
     update_package "docker" "tags" "v28.2.2"
     update_package "dockerd" "releases" "v28.2.2"
+	update_package "softethervpn5"
+    update_package "zerotier"
 }
 
 main "$@"

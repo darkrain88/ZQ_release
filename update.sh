@@ -1036,6 +1036,8 @@ main() {
     update_package "containerd" "releases" "v1.7.27"
     update_package "docker" "tags" "v28.2.2"
     update_package "dockerd" "releases" "v28.2.2"
+	update_package "softethervpn5"
+    update_package "zerotier"
     apply_hash_fixes # 调用哈希修正函数
 }
 

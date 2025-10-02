@@ -24,6 +24,8 @@ on:
           - zn_m2_immwrt
           - zn_m2_libwrt
           - x64_immwrt
+          - zn_m2_immwrt-nowifi
+          - zn_m2_libwrt-nowifi		  
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

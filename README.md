@@ -17,7 +17,7 @@ sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_e
 
 1.  克隆仓库：
     ```bash
-    git clone https://github.com/ZqinKing/wrt_release.git
+    git clone https://github.com/darkrain88/ZQ_release.git
     ```
 2.  进入目录：
     ```bash

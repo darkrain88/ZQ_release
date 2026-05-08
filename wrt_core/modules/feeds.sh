@@ -8,36 +8,27 @@ get_feeds_path() {
     printf '%s\n' "$feeds_path"
 }
 
+append_feed_if_missing() {
+    local feeds_path="$1"
+    local match_pattern="$2"
+    local feed_entry="$3"
+
+    if ! grep -q "$match_pattern" "$feeds_path"; then
+        [ -z "$(tail -c 1 "$feeds_path")" ] || echo "" >>"$feeds_path"
+        echo "$feed_entry" >>"$feeds_path"
+    fi
+}
+
 update_feeds() {
     local FEEDS_PATH
     FEEDS_PATH=$(get_feeds_path)
     sed -i '/^#/d' "$FEEDS_PATH"
     sed -i '/packages_ext/d' "$FEEDS_PATH"
 
-    # if ! grep -q "small-package" "$FEEDS_PATH"; then
-    #     [ -z "$(tail -c 1 "$FEEDS_PATH")" ] || echo "" >>"$FEEDS_PATH"
-    #     echo "src-git small8 https://github.com/kenzok8/jell" >>"$FEEDS_PATH"
-    # fi
-
-    if ! grep -q "openwrt-passwall" "$FEEDS_PATH"; then
-        [ -z "$(tail -c 1 "$FEEDS_PATH")" ] || echo "" >>"$FEEDS_PATH"
-        echo "src-git passwall https://github.com/Openwrt-Passwall/openwrt-passwall;main" >>"$FEEDS_PATH"
-    fi
-
-    if ! grep -q "openwrt_bandix" "$FEEDS_PATH"; then
-        [ -z "$(tail -c 1 "$FEEDS_PATH")" ] || echo "" >>"$FEEDS_PATH"
-        echo 'src-git openwrt_bandix https://github.com/timsaya/openwrt-bandix.git;main' >>"$FEEDS_PATH"
-    fi
-
-    if ! grep -q "luci_app_bandix" "$FEEDS_PATH"; then
-        [ -z "$(tail -c 1 "$FEEDS_PATH")" ] || echo "" >>"$FEEDS_PATH"
-        echo 'src-git luci_app_bandix https://github.com/timsaya/luci-app-bandix.git;main' >>"$FEEDS_PATH"
-    fi
-
-    if ! grep -q "nikki" "$FEEDS_PATH"; then
-        [ -z "$(tail -c 1 "$FEEDS_PATH")" ] || echo "" >>"$FEEDS_PATH"
-        echo 'src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git;main' >>"$FEEDS_PATH"
-    fi
+    append_feed_if_missing "$FEEDS_PATH" "openwrt-passwall" "src-git passwall https://github.com/Openwrt-Passwall/openwrt-passwall;main"
+    append_feed_if_missing "$FEEDS_PATH" "openwrt_bandix" "src-git openwrt_bandix https://github.com/timsaya/openwrt-bandix.git;main"
+    append_feed_if_missing "$FEEDS_PATH" "luci_app_bandix" "src-git luci_app_bandix https://github.com/timsaya/luci-app-bandix.git;main"
+    append_feed_if_missing "$FEEDS_PATH" "nikki" "src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git;main"
 
     if [ ! -f "$BUILD_DIR/include/bpf.mk" ]; then
         touch "$BUILD_DIR/include/bpf.mk"

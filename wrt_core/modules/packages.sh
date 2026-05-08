@@ -70,7 +70,7 @@ update_golang() {
 }
 
 install_small8() {
-    local repo_url="https://github.com/kenzok8/jell.git"
+    local repo_url="https://github.com/kenzok8/small-package.git"
     local feed_name="small8"
     local feeds_path
     local fullconenat_nft_dir="$BUILD_DIR/package/network/utils/fullconenat-nft"
@@ -90,7 +90,7 @@ install_small8() {
         luci-app-ddns-go taskd luci-lib-xterm luci-lib-taskd luci-app-store quickstart \
         luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest netdata luci-app-netdata \
         lucky luci-app-lucky luci-app-openclash luci-app-homeproxy luci-app-amlogic \
-        oaf open-app-filter luci-app-oaf luci-app-easytier \
+        oaf open-app-filter luci-app-oaf easytier luci-app-easytier \
         msd_lite luci-app-msd_lite cups luci-app-cupsd
     )
     local required_feed_dirs=(
@@ -161,11 +161,7 @@ install_small8() {
     echo "正在更新 $feed_name 本地 feed 索引..."
     ./scripts/feeds update "$feed_name"
 
-    for pkg in "${required_feed_dirs[@]}"; do
-        if [ ! -d "$BUILD_DIR/feeds/$feed_name/$pkg" ]; then
-            missing_feed_dirs+=("feeds/$feed_name/$pkg")
-        fi
-    done
+    collect_missing_directories "$BUILD_DIR/feeds/$feed_name" required_feed_dirs missing_feed_dirs
 
     if [ ${#missing_feed_dirs[@]} -ne 0 ]; then
         printf '错误：%s 本地 feed 未生成以下仓库依赖路径：\n' "$feed_name" >&2
@@ -183,17 +179,26 @@ verify_small8_installed_paths() {
     )
     local missing_package_dirs=()
 
-    for pkg in "${required_package_dirs[@]}"; do
-        if [ ! -d "$BUILD_DIR/package/feeds/$feed_name/$pkg" ]; then
-            missing_package_dirs+=("package/feeds/$feed_name/$pkg")
-        fi
-    done
+    collect_missing_directories "$BUILD_DIR/package/feeds/$feed_name" required_package_dirs missing_package_dirs
 
     if [ ${#missing_package_dirs[@]} -ne 0 ]; then
         printf '错误：%s 安装后缺少以下仓库依赖路径：\n' "$feed_name" >&2
         printf '  - %s\n' "${missing_package_dirs[@]}" >&2
         return 1
     fi
+}
+
+collect_missing_directories() {
+    local base_dir="$1"
+    local -n required_dirs_ref="$2"
+    local -n missing_dirs_ref="$3"
+    local dir_name
+
+    for dir_name in "${required_dirs_ref[@]}"; do
+        if [ ! -d "$base_dir/$dir_name" ]; then
+            missing_dirs_ref+=("${base_dir#$BUILD_DIR/}/$dir_name")
+        fi
+    done
 }
 
 install_passwall() {
